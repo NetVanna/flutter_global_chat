@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:global_chat/providers/user_provider.dart';
 import 'package:global_chat/screens/dashboard_screen.dart';
 import 'package:global_chat/screens/login_screen.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -39,6 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void openDashboard() {
+    Provider.of<UserProvider>(context, listen: false).getUserDetails();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

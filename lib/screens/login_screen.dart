@@ -13,6 +13,7 @@ class _LoginScreenState extends State<LoginScreen> {
   var formKey = GlobalKey<FormState>();
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -68,18 +69,24 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(0, 50),
+                      minimumSize: const Size(0, 50),
                       backgroundColor: Colors.deepPurple,
                       foregroundColor: Colors.white),
-                  onPressed: () {
+                  onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      LoginController.loginAccount(
+                      isLoading = true;
+                      setState(() {});
+                      await LoginController.loginAccount(
                           context: context,
                           email: emailController.text,
                           password: passwordController.text);
+                      isLoading = false;
+                      setState(() {});
                     }
                   },
-                  child: const Text("Login Account"),
+                  child: isLoading
+                      ? const CircularProgressIndicator(color: Colors.white,)
+                      : const Text("Login Account"),
                 ),
               ),
               Row(

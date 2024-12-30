@@ -1,13 +1,24 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:global_chat/providers/user_provider.dart';
 import 'package:global_chat/screens/splash_screen.dart';
+import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => UserProvider(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,10 +28,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        brightness: Brightness.light,
-        useMaterial3: true,
-        fontFamily: "Poppins"
-      ),
+          brightness: Brightness.light,
+          useMaterial3: true,
+          fontFamily: "Poppins"),
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
     );
