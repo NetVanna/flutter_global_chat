@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:global_chat/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/dashboard_screen.dart';
 
@@ -7,7 +10,9 @@ class SignupController {
   static void createAccount(
       {required BuildContext context,
       required String email,
-      required String password,required String name,required String country}) async {
+      required String password,
+      required String name,
+      required String country}) async {
     if (email.isEmpty || password.isEmpty || name.isEmpty || country.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -29,6 +34,30 @@ class SignupController {
         password: password.trim(),
       );
 
+      /// declare user id
+      var userId = FirebaseAuth.instance.currentUser!.uid;
+
+      /// declare db for get all data in firebase fire store
+      var db = FirebaseFirestore.instance;
+
+      /// set data to database
+      Map<String, dynamic> data = {
+        "userId": userId.toString(),
+        "name": name,
+        "country": country,
+        "email": email,
+        "password": password
+      };
+
+      /// collection name users meaning table name is users
+      /// doc mean document it store user id
+      /// set data meaning store data from user input like name email password,
+      try {
+        await db.collection("users").doc(userId.toString()).set(data);
+      } catch (e) {
+        print(e);
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.green,
@@ -39,6 +68,7 @@ class SignupController {
         ),
       );
       await Future.delayed(const Duration(seconds: 2));
+      Provider.of<UserProvider>(context,listen: false).getUserDetails();
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
